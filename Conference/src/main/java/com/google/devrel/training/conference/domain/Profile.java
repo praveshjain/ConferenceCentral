@@ -1,5 +1,10 @@
 package com.google.devrel.training.conference.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.appengine.repackaged.com.google.common.collect.ImmutableList;
+import com.google.appengine.repackaged.org.apache.http.annotation.Immutable;
 import com.google.devrel.training.conference.form.ProfileForm.TeeShirtSize;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
@@ -11,6 +16,7 @@ public class Profile {
 	String mainEmail;
 	TeeShirtSize teeShirtSize;
 
+	private List<String> conferenceKeysToAttend = new ArrayList<String>();
 	// TODO indicate that the userId is to be used in the Entity's key
 	@Id
 	String userId;
@@ -33,6 +39,14 @@ public class Profile {
 		this.displayName = displayName;
 		this.mainEmail = mainEmail;
 		this.teeShirtSize = teeShirtSize;
+	}
+	
+	public List<String> getConferenceKeysToAttend(){
+		return ImmutableList.copyOf(conferenceKeysToAttend);
+	}
+	
+	public void addToConferenceKeysToAttend(String conferenceKey){
+		conferenceKeysToAttend.add(conferenceKey);
 	}
 
 	public String getDisplayName() {
@@ -57,6 +71,14 @@ public class Profile {
 		this.displayName = displayName;
 		if(teeShirtSize != null)
 		this.teeShirtSize = teeShirtSize;
+	}
+	
+	public void unregisterFromConference(String conferenceKey){
+		if(conferenceKeysToAttend.contains(conferenceKey)){
+			conferenceKeysToAttend.remove(conferenceKey);
+		}else{
+			throw new IllegalArgumentException("Invalid Conference Key : " + conferenceKey);
+		}
 	}
 
 	/**
